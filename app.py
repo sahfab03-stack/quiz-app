@@ -132,4 +132,4 @@ if name:
         st.markdown("---")
         st.markdown("### 📺 Watch More Quizzes On YouTube")
         st.link_button("🔴 Visit My YouTube Channel",
-                       "https://youtube.com/YOUR_CHANNEL_LINK")
+                       "https://www.youtube.com/channel/UCA-XhWpiwREw9Tt2UZnst2w")
