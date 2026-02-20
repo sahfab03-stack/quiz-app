@@ -1,8 +1,12 @@
 import streamlit as st
+import time
 
-st.title("🔥 Current Affairs Quiz 2026")
+st.set_page_config(page_title="Quiz App", page_icon="🔥", layout="centered")
 
-score = 0
+st.markdown("<h1 style='text-align: center; color: orange;'>🔥 Current Affairs Quiz 2026 🔥</h1>", unsafe_allow_html=True)
+
+# Name input
+name = st.text_input("Enter Your Name:")
 
 questions = [
     ("G20 शिखर सम्मेलन 2023 किस देश में हुआ?",
@@ -11,48 +15,58 @@ questions = [
     ("चंद्रयान-3 किस वर्ष लॉन्च हुआ?",
      ["2021", "2022", "2023", "2024"], "2023"),
 
-    ("भारत के वर्तमान राष्ट्रपति कौन हैं?",
-     ["रामनाथ कोविंद", "द्रौपदी मुर्मू", "नरेंद्र मोदी", "जगदीप धनखड़"], "द्रौपदी मुर्मू"),
-
     ("विश्व पर्यावरण दिवस कब मनाया जाता है?",
      ["5 जून", "15 जून", "21 मार्च", "22 अप्रैल"], "5 जून"),
-
-    ("BRICS में मूल रूप से कितने देश थे?",
-     ["3", "4", "5", "6"], "5"),
-
-    ("भारतीय संविधान कब लागू हुआ?",
-     ["15 अगस्त 1947", "26 जनवरी 1950", "2 अक्टूबर 1948", "26 नवंबर 1949"], "26 जनवरी 1950"),
-
-    ("RBI का मुख्यालय कहाँ है?",
-     ["दिल्ली", "मुंबई", "चेन्नई", "कोलकाता"], "मुंबई"),
-
-    ("एशियाई खेल 2022 कहाँ हुए?",
-     ["टोक्यो", "बीजिंग", "हांगझोउ", "सियोल"], "हांगझोउ"),
-
-    ("भारत का राष्ट्रीय पशु कौन सा है?",
-     ["शेर", "बाघ", "हाथी", "गैंडा"], "बाघ"),
-
-    ("डिजिटल इंडिया अभियान कब शुरू हुआ?",
-     ["2013", "2014", "2015", "2016"], "2015"),
 ]
 
-user_answers = []
+if "score" not in st.session_state:
+    st.session_state.score = 0
+
+if "leaderboard" not in st.session_state:
+    st.session_state.leaderboard = []
+
+score = 0
 
 for i, (q, options, answer) in enumerate(questions):
-    user_choice = st.radio(f"{i+1}. {q}", options)
-    user_answers.append((user_choice, answer))
 
-if st.button("Submit Quiz"):
-    for user, correct in user_answers:
-        if user == correct:
-            score += 1
+    st.markdown(f"### Question {i+1}")
+    choice = st.radio(q, options, key=i)
 
-    st.success(f"🎉 आपका स्कोर: {score} / 10")
+    if st.button(f"Submit Answer {i+1}"):
 
-    if score >= 8:
+        # Timer simulation
+        with st.spinner("⏳ Checking answer..."):
+            time.sleep(2)
+
+        if choice == answer:
+            st.success("✅ Correct Answer!")
+            st.session_state.score += 1
+        else:
+            st.error(f"❌ Wrong! Correct Answer is: {answer}")
+
+st.markdown("---")
+
+if st.button("🏁 Finish Quiz"):
+
+    final_score = st.session_state.score
+
+    st.markdown(f"## 🎉 {name}, Your Final Score: {final_score} / {len(questions)}")
+
+    # Performance message
+    if final_score == len(questions):
         st.balloons()
-        st.write("🔥 Excellent Performance!")
-    elif score >= 5:
-        st.write("👍 Good Job!")
+        st.success("🔥 Excellent Performance!")
+    elif final_score >= 2:
+        st.info("👍 Good Job!")
     else:
-        st.write("📚 और तैयारी करें!")
+        st.warning("📚 Keep Practicing!")
+
+    # Leaderboard update
+    if name:
+        st.session_state.leaderboard.append((name, final_score))
+
+    st.markdown("## 🏆 Leaderboard")
+    sorted_board = sorted(st.session_state.leaderboard, key=lambda x: x[1], reverse=True)
+
+    for player, pts in sorted_board:
+        st.write(f"{player} - {pts}")
