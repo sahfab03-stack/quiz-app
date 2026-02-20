@@ -5,7 +5,10 @@ st.set_page_config(page_title="Quiz App", page_icon="🔥", layout="centered")
 
 st.markdown("<h1 style='text-align: center; color: orange;'>🔥 Current Affairs Quiz 2026 🔥</h1>", unsafe_allow_html=True)
 
-# Name input
+# Sound effects (Correct & Wrong)
+correct_sound = "https://www.soundjay.com/buttons/sounds/button-3.mp3"
+wrong_sound = "https://www.soundjay.com/buttons/sounds/button-10.mp3"
+
 name = st.text_input("Enter Your Name:")
 
 questions = [
@@ -22,27 +25,42 @@ questions = [
 if "score" not in st.session_state:
     st.session_state.score = 0
 
+if "answered" not in st.session_state:
+    st.session_state.answered = [False] * len(questions)
+
 if "leaderboard" not in st.session_state:
     st.session_state.leaderboard = []
 
-score = 0
+# Real Countdown Timer (60 seconds)
+if "start_time" not in st.session_state:
+    st.session_state.start_time = time.time()
+
+remaining_time = 60 - int(time.time() - st.session_state.start_time)
+
+st.markdown(f"## ⏰ Time Left: {max(0, remaining_time)} seconds")
+
+if remaining_time <= 0:
+    st.error("⛔ Time's Up!")
+    st.stop()
 
 for i, (q, options, answer) in enumerate(questions):
 
     st.markdown(f"### Question {i+1}")
-    choice = st.radio(q, options, key=i)
 
-    if st.button(f"Submit Answer {i+1}"):
+    choice = st.radio(q, options, key=i, disabled=st.session_state.answered[i])
 
-        # Timer simulation
-        with st.spinner("⏳ Checking answer..."):
-            time.sleep(2)
+    if not st.session_state.answered[i]:
+        if st.button(f"Submit Answer {i+1}"):
 
-        if choice == answer:
-            st.success("✅ Correct Answer!")
-            st.session_state.score += 1
-        else:
-            st.error(f"❌ Wrong! Correct Answer is: {answer}")
+            if choice == answer:
+                st.success("✅ Correct Answer!")
+                st.audio(correct_sound)
+                st.session_state.score += 1
+            else:
+                st.error(f"❌ Wrong! Correct Answer is: {answer}")
+                st.audio(wrong_sound)
+
+            st.session_state.answered[i] = True
 
 st.markdown("---")
 
@@ -52,7 +70,6 @@ if st.button("🏁 Finish Quiz"):
 
     st.markdown(f"## 🎉 {name}, Your Final Score: {final_score} / {len(questions)}")
 
-    # Performance message
     if final_score == len(questions):
         st.balloons()
         st.success("🔥 Excellent Performance!")
@@ -61,7 +78,6 @@ if st.button("🏁 Finish Quiz"):
     else:
         st.warning("📚 Keep Practicing!")
 
-    # Leaderboard update
     if name:
         st.session_state.leaderboard.append((name, final_score))
 
