@@ -47,10 +47,6 @@ h2 {
 </style>
 """, unsafe_allow_html=True)
 
-# ================== LOGO ==================
-st.image("logo.png", width=180)  # 👉 Apna logo file yaha upload kare
-
-st.markdown("<h1>🔥 Current Affairs Luxury Quiz 2026 🔥</h1>", unsafe_allow_html=True)
 
 # ================== NAME INPUT ==================
 name = st.text_input("Enter Your Name:")
