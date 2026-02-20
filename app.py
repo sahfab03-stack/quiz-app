@@ -1,32 +1,27 @@
 import streamlit as st
 import time
-import uuid
 
 st.set_page_config(page_title="Luxury Quiz App", page_icon="🔥", layout="centered")
 
-# ================== SAUNDH STYLE THEME ==================
+# ================== THEME ==================
 st.markdown("""
 <style>
 
-/* Main background */
 .stApp {
     background-color: #F3EDE6;
     font-family: 'Georgia', serif;
 }
 
-/* Title */
 h1 {
     color: #0F3D3E;
     text-align: center;
     font-weight: bold;
 }
 
-/* Timer */
 h2 {
     color: #7A1E1E;
 }
 
-/* Question box */
 .stRadio > div {
     background-color: white;
     padding: 15px;
@@ -34,7 +29,6 @@ h2 {
     border: 1px solid #D8CFC4;
 }
 
-/* Buttons */
 .stButton>button {
     background-color: #0F3D3E;
     color: white;
@@ -45,7 +39,6 @@ h2 {
     border: none;
 }
 
-/* Button hover */
 .stButton>button:hover {
     background-color: #145A5A;
     color: white;
@@ -54,16 +47,16 @@ h2 {
 </style>
 """, unsafe_allow_html=True)
 
-# ================== HEADER ==================
+# ================== LOGO ==================
+st.image("logo.png", width=180)  # 👉 Apna logo file yaha upload kare
+
 st.markdown("<h1>🔥 Current Affairs Luxury Quiz 2026 🔥</h1>", unsafe_allow_html=True)
 
-# ================== UNIQUE ID ==================
-if "user_id" not in st.session_state:
-    st.session_state.user_id = str(uuid.uuid4())[:8]
-
-st.write(f"🆔 Your Unique ID: {st.session_state.user_id}")
-
+# ================== NAME INPUT ==================
 name = st.text_input("Enter Your Name:")
+
+if name:
+    st.success(f"✨ Welcome {name}! Best of Luck 🎯")
 
 # ================== QUESTIONS ==================
 questions = [
@@ -81,31 +74,16 @@ questions = [
 
     ("BRICS में मूल रूप से कितने देश थे?",
      ["3", "4", "5", "6"], "5"),
-
-    ("भारतीय संविधान कब लागू हुआ?",
-     ["15 अगस्त 1947", "26 जनवरी 1950", "2 अक्टूबर 1948", "26 नवंबर 1949"], "26 जनवरी 1950"),
-
-    ("RBI का मुख्यालय कहाँ है?",
-     ["दिल्ली", "मुंबई", "चेन्नई", "कोलकाता"], "मुंबई"),
-
-    ("एशियाई खेल 2022 कहाँ आयोजित हुए?",
-     ["टोक्यो", "बीजिंग", "हांगझोउ", "सियोल"], "हांगझोउ"),
-
-    ("भारत का राष्ट्रीय पशु कौन सा है?",
-     ["शेर", "बाघ", "हाथी", "गैंडा"], "बाघ"),
-
-    ("डिजिटल इंडिया अभियान कब शुरू हुआ?",
-     ["2013", "2014", "2015", "2016"], "2015"),
 ]
 
-# ================== SESSION STATES ==================
+# ================== SESSION ==================
 if "score" not in st.session_state:
     st.session_state.score = 0
 
 if "answered" not in st.session_state:
     st.session_state.answered = [False] * len(questions)
 
-# ================== TIMER (120 sec) ==================
+# ================== TIMER ==================
 if "start_time" not in st.session_state:
     st.session_state.start_time = time.time()
 
@@ -118,40 +96,40 @@ if remaining <= 0:
     st.stop()
 
 # ================== QUIZ ==================
-for i, (q, options, answer) in enumerate(questions):
+if name:
+    for i, (q, options, answer) in enumerate(questions):
 
-    st.markdown(f"### Question {i+1}")
+        st.markdown(f"### Question {i+1}")
 
-    choice = st.radio(q, options, key=i, disabled=st.session_state.answered[i])
+        choice = st.radio(q, options, key=i, disabled=st.session_state.answered[i])
 
-    if not st.session_state.answered[i]:
-        if st.button(f"Submit {i+1}"):
+        if not st.session_state.answered[i]:
+            if st.button(f"Submit {i+1}"):
 
-            if choice == answer:
-                st.success("✅ Correct Answer!")
-                st.session_state.score += 1
-            else:
-                st.error(f"❌ Wrong! Correct Answer: {answer}")
+                if choice == answer:
+                    st.success("✅ Correct Answer!")
+                    st.session_state.score += 1
+                else:
+                    st.error(f"❌ Wrong! Correct Answer: {answer}")
 
-            st.session_state.answered[i] = True
+                st.session_state.answered[i] = True
 
-st.markdown("---")
+    st.markdown("---")
 
-# ================== FINISH ==================
-if st.button("🏁 Finish Quiz"):
+    if st.button("🏁 Finish Quiz"):
 
-    st.success(f"🎉 {name} ({st.session_state.user_id}) | Final Score: {st.session_state.score} / {len(questions)}")
+        st.success(f"🎉 {name}, Your Final Score: {st.session_state.score} / {len(questions)}")
 
-    if st.session_state.score == len(questions):
-        st.balloons()
-        st.success("🔥 Excellent Performance!")
-    elif st.session_state.score >= 6:
-        st.info("👍 Good Job!")
-    else:
-        st.warning("📚 Keep Practicing!")
+        if st.session_state.score == len(questions):
+            st.balloons()
+            st.success("🔥 Excellent Performance!")
+        elif st.session_state.score >= 3:
+            st.info("👍 Good Job!")
+        else:
+            st.warning("📚 Keep Practicing!")
 
-# ================== RESTART ==================
-if st.button("🔄 Restart Quiz"):
-    st.session_state.score = 0
-    st.session_state.answered = [False] * len(questions)
-    st.session_state.start_time = time.time()
+        # ================== YOUTUBE LINK ==================
+        st.markdown("---")
+        st.markdown("### 📺 Watch More Quizzes On YouTube")
+        st.link_button("🔴 Visit My YouTube Channel",
+                       "https://youtube.com/YOUR_CHANNEL_LINK")
