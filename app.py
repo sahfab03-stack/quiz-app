@@ -1,5 +1,4 @@
 import streamlit as st
-import time
 
 st.set_page_config(page_title="Luxury Quiz App", page_icon="🔥", layout="centered")
 
@@ -47,7 +46,6 @@ h2 {
 </style>
 """, unsafe_allow_html=True)
 
-
 st.title("🔥 Current Affairs Luxury Quiz")
 
 # ================== QUESTIONS ==================
@@ -75,28 +73,12 @@ if "score" not in st.session_state:
 if "answered" not in st.session_state:
     st.session_state.answered = [False] * len(questions)
 
-if "start_time" not in st.session_state:
-    st.session_state.start_time = time.time()
-
 if "finished" not in st.session_state:
     st.session_state.finished = False
 
-# ================== NAME INPUT ==================
-name = st.text_input("Enter Your Name:")
+# ================== QUIZ ==================
+if not st.session_state.finished:
 
-if name and not st.session_state.finished:
-    st.success(f"✨ Welcome {name}! Best of Luck 🎯")
-
-    # ================== TIMER ==================
-    remaining = 120 - int(time.time() - st.session_state.start_time)
-    st.markdown(f"<h2>⏰ Time Left: {max(0, remaining)} sec</h2>", unsafe_allow_html=True)
-
-    if remaining <= 0:
-        st.error("⛔ Time's Up!")
-        st.session_state.finished = True
-        st.stop()
-
-    # ================== QUIZ ==================
     for i, (q, options, answer) in enumerate(questions):
 
         st.markdown(f"### Question {i+1}")
@@ -120,11 +102,11 @@ if name and not st.session_state.finished:
         st.session_state.finished = True
 
 
-# ================== RESULT SECTION ==================
-if st.session_state.finished and name:
+# ================== RESULT ==================
+if st.session_state.finished:
 
     st.markdown("---")
-    st.success(f"🎉 {name}, Your Final Score: {st.session_state.score} / {len(questions)}")
+    st.success(f"🎉 Your Final Score: {st.session_state.score} / {len(questions)}")
 
     if st.session_state.score == len(questions):
         st.balloons()
