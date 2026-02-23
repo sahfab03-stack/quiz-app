@@ -50,6 +50,7 @@ st.title("🔥 Current Affairs Luxury Quiz")
 
 # ================== QUESTIONS ==================
 questions = [
+
     {
         "question": "हाल ही में 78वां जोमी राष्ट्रीय दिवस कहाँ मनाया गया?",
         "options": ["नागालैंड", "मिजोरम", "मणिपुर", "असम"],
@@ -169,8 +170,8 @@ questions = [
         "options": ["उत्तराखंड", "सिक्किम", "अरुणाचल प्रदेश", "हिमाचल प्रदेश"],
         "answer": "हिमाचल प्रदेश"
     }
-]
 
+]
 # ================== SESSION INIT ==================
 if "score" not in st.session_state:
     st.session_state.score = 0
