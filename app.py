@@ -48,11 +48,7 @@ h2 {
 """, unsafe_allow_html=True)
 
 
-# ================== NAME INPUT ==================
-name = st.text_input("Enter Your Name:")
-
-if name:
-    st.success(f"✨ Welcome {name}! Best of Luck 🎯")
+st.title("🔥 Current Affairs Luxury Quiz")
 
 # ================== QUESTIONS ==================
 questions = [
@@ -72,35 +68,43 @@ questions = [
      ["3", "4", "5", "6"], "5"),
 ]
 
-# ================== SESSION ==================
+# ================== SESSION INIT ==================
 if "score" not in st.session_state:
     st.session_state.score = 0
 
 if "answered" not in st.session_state:
     st.session_state.answered = [False] * len(questions)
 
-# ================== TIMER ==================
 if "start_time" not in st.session_state:
     st.session_state.start_time = time.time()
 
-remaining = 120 - int(time.time() - st.session_state.start_time)
+if "finished" not in st.session_state:
+    st.session_state.finished = False
 
-st.markdown(f"<h2>⏰ Time Left: {max(0, remaining)} sec</h2>", unsafe_allow_html=True)
+# ================== NAME INPUT ==================
+name = st.text_input("Enter Your Name:")
 
-if remaining <= 0:
-    st.error("⛔ Time's Up!")
-    st.stop()
+if name and not st.session_state.finished:
+    st.success(f"✨ Welcome {name}! Best of Luck 🎯")
 
-# ================== QUIZ ==================
-if name:
+    # ================== TIMER ==================
+    remaining = 120 - int(time.time() - st.session_state.start_time)
+    st.markdown(f"<h2>⏰ Time Left: {max(0, remaining)} sec</h2>", unsafe_allow_html=True)
+
+    if remaining <= 0:
+        st.error("⛔ Time's Up!")
+        st.session_state.finished = True
+        st.stop()
+
+    # ================== QUIZ ==================
     for i, (q, options, answer) in enumerate(questions):
 
         st.markdown(f"### Question {i+1}")
 
-        choice = st.radio(q, options, key=i, disabled=st.session_state.answered[i])
+        choice = st.radio(q, options, key=f"q{i}", disabled=st.session_state.answered[i])
 
         if not st.session_state.answered[i]:
-            if st.button(f"Submit {i+1}"):
+            if st.button(f"Submit {i+1}", key=f"btn{i}"):
 
                 if choice == answer:
                     st.success("✅ Correct Answer!")
@@ -113,19 +117,25 @@ if name:
     st.markdown("---")
 
     if st.button("🏁 Finish Quiz"):
+        st.session_state.finished = True
 
-        st.success(f"🎉 {name}, Your Final Score: {st.session_state.score} / {len(questions)}")
 
-        if st.session_state.score == len(questions):
-            st.balloons()
-            st.success("🔥 Excellent Performance!")
-        elif st.session_state.score >= 3:
-            st.info("👍 Good Job!")
-        else:
-            st.warning("📚 Keep Practicing!")
+# ================== RESULT SECTION ==================
+if st.session_state.finished and name:
 
-        # ================== YOUTUBE LINK ==================
-        st.markdown("---")
-        st.markdown("### 📺 Watch More Quizzes On YouTube")
-        st.link_button("🔴 Visit My YouTube Channel",
-                       "https://www.youtube.com/watch?v=tqYnGxO9gCU")
+    st.markdown("---")
+    st.success(f"🎉 {name}, Your Final Score: {st.session_state.score} / {len(questions)}")
+
+    if st.session_state.score == len(questions):
+        st.balloons()
+        st.success("🔥 Excellent Performance!")
+    elif st.session_state.score >= 3:
+        st.info("👍 Good Job!")
+    else:
+        st.warning("📚 Keep Practicing!")
+
+    # ================== YOUTUBE LINK ==================
+    st.markdown("---")
+    st.markdown("### 📺 Watch More Quizzes On YouTube")
+    st.link_button("🔴 Visit My YouTube Channel",
+                   "https://www.youtube.com/watch?v=tqYnGxO9gCU")
