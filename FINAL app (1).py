@@ -100,6 +100,7 @@ quiz_questions = [
      "सिक्किम")
 
 ]
+
 # ================== SESSION INIT ==================
 if "score" not in st.session_state:
     st.session_state.score = 0
